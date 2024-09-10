@@ -115,6 +115,7 @@ class MainActivity : ComponentActivity() {
                                     label = { Text("Coordinates") },
                                     selected = selected == Destination.Coordinates,
                                     onClick = {
+                                        selected = Destination.Coordinates
                                         coordinatesPresentation.load(scope)
                                         scope.launch {
                                             drawerState.close()

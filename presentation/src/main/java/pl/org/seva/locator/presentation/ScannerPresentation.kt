@@ -2,7 +2,7 @@ package pl.org.seva.locator.presentation
 
 import kotlinx.coroutines.CoroutineScope
 import pl.org.seva.locator.domain.model.TagDomainModel
-import pl.org.seva.locator.domain.usecase.SaveTagUseCase
+import pl.org.seva.locator.domain.usecase.AddTagUseCase
 import pl.org.seva.locator.domain.usecase.ScanUseCase
 import pl.org.seva.locator.domain.usecase.StopScanUseCase
 import pl.org.seva.locator.presentation.architecture.BasePresentation
@@ -17,7 +17,7 @@ class ScannerPresentation(
     private val tagPresentationToDomainMapper: TagPresentationToDomainMapper,
     private val scanUseCase: ScanUseCase,
     private val stopScanUseCase: StopScanUseCase,
-    private val saveUseCase: SaveTagUseCase,
+    private val saveUseCase: AddTagUseCase,
     useCaseExecutorProvider: UseCaseExecutorProvider,
 ): BasePresentation<ScannerViewState>(useCaseExecutorProvider) {
 

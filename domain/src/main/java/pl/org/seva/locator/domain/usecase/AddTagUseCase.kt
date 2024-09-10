@@ -6,13 +6,13 @@ import pl.org.seva.locator.domain.cleanarchitecture.usecase.BackgroundExecutingU
 import pl.org.seva.locator.domain.model.TagDomainModel
 import pl.org.seva.locator.domain.repository.TagRepository
 
-class SaveTagUseCase(
+class AddTagUseCase(
     private val tagRepository: TagRepository,
 ) : BackgroundExecutingUseCase<TagDomainModel, Unit>() {
 
     override suspend fun executeInBackground(request: TagDomainModel) {
         withContext(Dispatchers.IO) {
-            tagRepository.save(request)
+            tagRepository.add(request)
         }
     }
 

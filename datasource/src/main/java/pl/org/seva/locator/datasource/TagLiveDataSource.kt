@@ -45,6 +45,10 @@ class TagLiveDataSource(
         tagDao.insert(tagDataToDataSourceMapper.toDataSource(tag))
     }
 
+    override fun update(tag: TagDataModel) {
+        tagDao.update(tagDataToDataSourceMapper.toDataSource(tag))
+    }
+
     override fun getAll() = tagDao.getAll().map { tagDataSourceToDataMapperMapper.toData(it) }
 
 }

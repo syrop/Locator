@@ -35,13 +35,17 @@ class TagLiveRepository(
 
     override fun stopScan() = tagDataSource.stopScan()
 
-    override fun save(tag: TagDomainModel) {
+    override fun add(tag: TagDomainModel) {
         val all = tagDataSource.getAll()
         if (all.find { it.address == tag.address } != null) {
             return
         }
         val newY = (tagDataSource.getAll().maxOfOrNull { it.y } ?: -1) + 1
         tagDataSource.add(tagDomainToDataMapper.toData(tag.copy(y = newY)))
+    }
+
+    override fun update(tag: TagDomainModel) {
+        tagDataSource.update(tagDomainToDataMapper.toData(tag))
     }
 
 }

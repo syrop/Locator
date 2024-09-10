@@ -12,6 +12,8 @@ interface TagRepository {
 
     fun stopScan()
 
-    fun save(tag: TagDomainModel)
+    fun add(tag: TagDomainModel)
+
+    fun update(tag: TagDomainModel)
 
 }

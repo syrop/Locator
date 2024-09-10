@@ -10,5 +10,7 @@ interface TagDataSource {
 
     fun add(tag: TagDataModel)
 
+    fun update(tag: TagDataModel)
+
     fun getAll(): List<TagDataModel>
 }

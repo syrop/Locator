@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Update
 import pl.org.seva.locator.datasource.model.TagDataSourceModel
 
 @Dao
@@ -17,5 +18,8 @@ interface TagDao {
 
     @Delete
     fun delete(tag: TagDataSourceModel)
+
+    @Update
+    fun update(tag: TagDataSourceModel)
 
 }

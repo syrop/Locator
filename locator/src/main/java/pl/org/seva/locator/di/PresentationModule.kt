@@ -11,9 +11,10 @@ import pl.org.seva.locator.data.repository.TagLiveRepository
 import pl.org.seva.locator.domain.cleanarchitecture.usecase.UseCaseExecutor
 import pl.org.seva.locator.domain.repository.TagRepository
 import pl.org.seva.locator.domain.usecase.GetAllTagsUseCase
-import pl.org.seva.locator.domain.usecase.SaveTagUseCase
+import pl.org.seva.locator.domain.usecase.AddTagUseCase
 import pl.org.seva.locator.domain.usecase.ScanUseCase
 import pl.org.seva.locator.domain.usecase.StopScanUseCase
+import pl.org.seva.locator.domain.usecase.UpdateTagUseCase
 import pl.org.seva.locator.presentation.CoordinatesPresentation
 import pl.org.seva.locator.presentation.ScannerPresentation
 import pl.org.seva.locator.presentation.architecture.UseCaseExecutorProvider
@@ -41,7 +42,10 @@ class PresentationModule {
     fun providesStopScanUseCase(tagRepository: TagRepository) = StopScanUseCase(tagRepository)
 
     @Provides
-    fun providesSaveTagUseCase(tagRepository: TagRepository) = SaveTagUseCase(tagRepository)
+    fun providesAddTagUseCase(tagRepository: TagRepository) = AddTagUseCase(tagRepository)
+
+    @Provides
+    fun providesUpdateUpdateTagUseCase(tagRepository: TagRepository) = UpdateTagUseCase(tagRepository)
 
     @Provides
     fun provideGetAllUseCase(tagRepository: TagRepository) = GetAllTagsUseCase(tagRepository)
@@ -65,14 +69,14 @@ class PresentationModule {
         tagPresentationToDomainMapper: TagPresentationToDomainMapper,
         scanUseCase: ScanUseCase,
         stopScanUseCase: StopScanUseCase,
-        saveTagUseCase: SaveTagUseCase,
+        addTagUseCase: AddTagUseCase,
         useCaseExecutorProvider: UseCaseExecutorProvider,
     ) = ScannerPresentation(
         tagDomainToPresentationMapper,
         tagPresentationToDomainMapper,
         scanUseCase,
         stopScanUseCase,
-        saveTagUseCase,
+        addTagUseCase,
         useCaseExecutorProvider,
     )
 
@@ -80,11 +84,15 @@ class PresentationModule {
     @Singleton
     fun provideCoordinatesPresentation(
         tagDomainToPresentationMapper: TagDomainToPresentationMapper,
+        tagPresentationToDomainMapper: TagPresentationToDomainMapper,
         getAllTagsUseCase: GetAllTagsUseCase,
+        updateTagUseCase: UpdateTagUseCase,
         useCaseExecutorProvider: UseCaseExecutorProvider,
     ) = CoordinatesPresentation(
         tagDomainToPresentationMapper,
+        tagPresentationToDomainMapper,
         getAllTagsUseCase,
+        updateTagUseCase,
         useCaseExecutorProvider,
     )
 
