@@ -7,7 +7,9 @@ class PeripheralToDataMapper {
 
     fun toData(input: BluetoothPeripheral): TagDataModel = TagDataModel(
         input.name,
-        input.address
+        input.address,
+        0,
+        0,
     )
 
 }

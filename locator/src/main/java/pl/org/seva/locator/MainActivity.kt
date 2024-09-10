@@ -4,15 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.ModalDrawerSheet
@@ -35,16 +32,23 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import pl.org.seva.locator.ui.theme.VictorLocatorTheme
 import kotlinx.serialization.Serializable
+import pl.org.seva.locator.presentation.CoordinatesPresentation
 import pl.org.seva.locator.presentation.ScannerPresentation
+import pl.org.seva.locator.screen.CoordinatesScreen
+import pl.org.seva.locator.screen.GreetingScreen
+import pl.org.seva.locator.screen.ScannerScreen
 import javax.inject.Inject
 
 @Serializable
 object Greetings
 @Serializable
+object Coordinates
+@Serializable
 object Scanner
 
 enum class Destination {
     Greetings,
+    Coordinates,
     Scanner,
 }
 
@@ -53,6 +57,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var scannerPresentation: ScannerPresentation
+
+    @Inject
+    lateinit var coordinatesPresentation: CoordinatesPresentation
 
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,6 +112,17 @@ class MainActivity : ComponentActivity() {
                                     }
                                 )
                                 NavigationDrawerItem(
+                                    label = { Text("Coordinates") },
+                                    selected = selected == Destination.Coordinates,
+                                    onClick = {
+                                        coordinatesPresentation.load(scope)
+                                        scope.launch {
+                                            drawerState.close()
+                                        }
+                                        navController.navigate(route = Coordinates)
+                                    }
+                                )
+                                NavigationDrawerItem(
                                     label = { Text(text = "Scanner") },
                                     selected = selected == Destination.Scanner,
                                     onClick = {
@@ -122,6 +140,7 @@ class MainActivity : ComponentActivity() {
 
                         NavHost(navController = navController, startDestination = Greetings) {
                             composable<Greetings> { GreetingScreen(name = "Android") }
+                            composable<Coordinates> { CoordinatesScreen(coordinatesPresentation) }
                             composable<Scanner> { ScannerScreen(scannerPresentation) }
                         }
                     }
@@ -131,5 +150,3 @@ class MainActivity : ComponentActivity() {
     }
 
 }
-
-

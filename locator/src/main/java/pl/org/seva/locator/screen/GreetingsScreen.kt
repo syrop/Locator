@@ -1,4 +1,4 @@
-package pl.org.seva.locator
+package pl.org.seva.locator.screen
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,4 +11,5 @@ fun GreetingScreen(name: String, modifier: Modifier = Modifier) {
         text = "Hello $name!",
         modifier = modifier
     )
+
 }

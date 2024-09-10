@@ -19,7 +19,7 @@ abstract class BasePresentation<VIEW_STATE : Any>(
         useCaseExecutorProvider()
     }
 
-    protected fun <INPUT, OUTPUT> execute(
+    private fun <INPUT, OUTPUT> execute(
         useCase: UseCase<INPUT, OUTPUT>,
         coroutineScope: CoroutineScope,
         value: INPUT,
@@ -42,7 +42,7 @@ abstract class BasePresentation<VIEW_STATE : Any>(
         updatedState: VIEW_STATE.() -> VIEW_STATE
     ) = updateViewState(viewState.value.updatedState())
 
-    protected fun updateViewState(newViewState: VIEW_STATE) {
+    private fun updateViewState(newViewState: VIEW_STATE) {
         mutableViewState.value = newViewState
     }
 

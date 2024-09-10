@@ -9,6 +9,8 @@ import dagger.hilt.components.SingletonComponent
 import pl.org.seva.locator.data.datasource.TagDataSource
 import pl.org.seva.locator.datasource.TagLiveDataSource
 import pl.org.seva.locator.datasource.mapper.PeripheralToDataMapper
+import pl.org.seva.locator.datasource.mapper.TagDataSourceToDataMapperMapper
+import pl.org.seva.locator.datasource.mapper.TagDataToDataSourceMapper
 import javax.inject.Singleton
 
 @Module
@@ -19,9 +21,23 @@ class DataSourceModule {
     fun providesPeripheralToDataMapper() = PeripheralToDataMapper()
 
     @Provides
+    fun provideTagDataToDataSourceMapper() = TagDataToDataSourceMapper()
+
+    @Provides
+    fun provideTagDataSourceToDataMapper() = TagDataSourceToDataMapperMapper()
+
+    @Provides
     @Singleton
     fun provideTagDataSource(
         @ApplicationContext ctx: Context,
-        peripheralToDataMapper: PeripheralToDataMapper
-    ): TagDataSource = TagLiveDataSource(ctx, peripheralToDataMapper)
+        peripheralToDataMapper: PeripheralToDataMapper,
+        tagDataToDataSourceMapper: TagDataToDataSourceMapper,
+        tagDataSourceToDataMapperMapper: TagDataSourceToDataMapperMapper,
+    ): TagDataSource = TagLiveDataSource(
+        ctx,
+        peripheralToDataMapper,
+        tagDataToDataSourceMapper,
+        tagDataSourceToDataMapperMapper,
+    )
+
 }

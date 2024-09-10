@@ -3,9 +3,9 @@ package pl.org.seva.locator.presentation.mapper
 import pl.org.seva.locator.domain.model.TagDomainModel
 import pl.org.seva.locator.presentation.model.TagPresentationModel
 
-class TagDomainToPresentationMapper {
+class TagPresentationToDomainMapper {
 
-    fun toPresentation(input: TagDomainModel) = TagPresentationModel(
+    fun toDomain(input: TagPresentationModel) = TagDomainModel(
         input.name,
         input.address,
         input.x,

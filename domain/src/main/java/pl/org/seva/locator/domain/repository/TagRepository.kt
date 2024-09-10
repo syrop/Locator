@@ -6,8 +6,12 @@ interface TagRepository {
 
     val tags: List<TagDomainModel>
 
+    fun load()
+
     fun scan(onFound: () -> Unit = {})
 
     fun stopScan()
+
+    fun save(tag: TagDomainModel)
 
 }

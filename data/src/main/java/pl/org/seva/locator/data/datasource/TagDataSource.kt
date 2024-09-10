@@ -8,4 +8,7 @@ interface TagDataSource {
 
     fun stopScan()
 
+    fun add(tag: TagDataModel)
+
+    fun getAll(): List<TagDataModel>
 }
