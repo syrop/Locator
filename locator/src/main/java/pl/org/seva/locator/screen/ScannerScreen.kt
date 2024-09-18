@@ -62,7 +62,7 @@ fun ScannerScreen(presentation: ScannerPresentation) {
         HorizontalDivider(
             thickness = 2.dp,
         )
-        presentation.viewState.collectAsState().value.tags.onEach { tag ->
+        presentation.viewState.collectAsState().value.tags.forEach { tag ->
             TextButton(
                 modifier = Modifier.fillMaxSize(),
                 onClick = {

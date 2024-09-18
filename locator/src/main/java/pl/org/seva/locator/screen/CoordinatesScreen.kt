@@ -135,12 +135,12 @@ fun CoordinatesScreen(
                         label = { Text("Name") }
                     )
                     TextField(
-                        value = enteredX.toString(),
+                        value = enteredX,
                         onValueChange = { enteredX = it },
                         label = { Text("X") }
                     )
                     TextField(
-                        value = enteredY.toString(),
+                        value = enteredY,
                         onValueChange = { enteredY = it },
                         label = { Text("Y") }
                     )

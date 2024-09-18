@@ -1,6 +1,7 @@
 package pl.org.seva.locator.presentation
 
 import kotlinx.coroutines.CoroutineScope
+import pl.org.seva.locator.domain.model.ScanResultDomainModel
 import pl.org.seva.locator.domain.model.TagDomainModel
 import pl.org.seva.locator.domain.usecase.GetAllTagsUseCase
 import pl.org.seva.locator.domain.usecase.UpdateTagUseCase
@@ -23,10 +24,14 @@ class CoordinatesPresentation(
         get() = CoordinatesViewState(emptyList())
 
     fun load(scope: CoroutineScope) {
-        getAllTagsUseCase(scope, Unit, ::onLoaded)
+        getAllTagsUseCase(scope, Unit, ::onLoadedWithScanResult)
     }
 
-    fun onLoaded(list: List<TagDomainModel>, scope: CoroutineScope) {
+    fun onLoadedWithScanResult(list: List<Pair<TagDomainModel, ScanResultDomainModel>>) {
+        updateViewState { CoordinatesViewState(list.map { tagDomainToPresentationMapper.toPresentation(it.first) }) }
+    }
+
+    fun onLoaded(list: List<TagDomainModel>) {
         updateViewState { CoordinatesViewState(list.map { tagDomainToPresentationMapper.toPresentation(it) }) }
     }
 

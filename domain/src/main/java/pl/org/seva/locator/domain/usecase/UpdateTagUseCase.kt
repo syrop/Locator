@@ -14,7 +14,7 @@ class UpdateTagUseCase(
         return withContext(Dispatchers.IO) {
             tagRepository.update(request)
             tagRepository.load()
-            tagRepository.tags
+            tagRepository.tags.map { it.first }
         }
     }
 

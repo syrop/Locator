@@ -1,33 +1,37 @@
 package pl.org.seva.locator.data.repository
 
 import pl.org.seva.locator.data.datasource.TagDataSource
+import pl.org.seva.locator.data.mapper.ScanResultDataToDomainMapper
 import pl.org.seva.locator.data.mapper.TagDataToDomainMapper
 import pl.org.seva.locator.data.mapper.TagDomainToDataMapper
+import pl.org.seva.locator.data.model.ScanResultDataModel
 import pl.org.seva.locator.data.model.TagDataModel
+import pl.org.seva.locator.domain.model.ScanResultDomainModel
 import pl.org.seva.locator.domain.model.TagDomainModel
 import pl.org.seva.locator.domain.repository.TagRepository
 
 class TagLiveRepository(
     private val tagDataToDomainMapper: TagDataToDomainMapper,
+    private val scanResultDataToDomainMapper: ScanResultDataToDomainMapper,
     private val tagDomainToDataMapper: TagDomainToDataMapper,
     private val tagDataSource: TagDataSource,
 ) : TagRepository {
 
-    private val list = mutableListOf<TagDataModel>()
+    private val list = mutableListOf<Pair<TagDataModel, ScanResultDataModel?>>()
 
-    override val tags get() = list.map { tagDataToDomainMapper.toDomain(it) }
+    override val tags get() = list.map { tagDataToDomainMapper.toDomain(it.first) to scanResultDataToDomainMapper.toDomain(it.second) }
 
     override fun load() {
         list.clear()
-        list.addAll(tagDataSource.getAll())
+        list.addAll(tagDataSource.getAll().map { it to null })
     }
 
     override fun scan(onFound: () -> Unit) {
         list.clear()
         onFound()
-        tagDataSource.scan { tag ->
-            if (list.find { it.address == tag.address } == null) {
-                list.add(tag)
+        tagDataSource.scan { tag, scanResult ->
+            if (list.find { it.first.address == tag.address } == null) {
+                list.add(tag to scanResult)
                 onFound()
             }
         }

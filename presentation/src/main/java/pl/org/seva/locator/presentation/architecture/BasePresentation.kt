@@ -23,7 +23,7 @@ abstract class BasePresentation<VIEW_STATE : Any>(
         useCase: UseCase<INPUT, OUTPUT>,
         coroutineScope: CoroutineScope,
         value: INPUT,
-        onSuccess: (OUTPUT, CoroutineScope) -> Unit = { _, _ -> },
+        onSuccess: (OUTPUT) -> Unit = {},
         onException: (DomainException) -> Unit = {}
     ) {
         useCaseExecutor.execute(useCase, coroutineScope, value, onSuccess, onException)
@@ -32,7 +32,7 @@ abstract class BasePresentation<VIEW_STATE : Any>(
     protected operator fun <INPUT, OUTPUT> UseCase<INPUT, OUTPUT>.invoke(
         coroutineScope: CoroutineScope,
         value: INPUT,
-        onSuccess: (OUTPUT, CoroutineScope) -> Unit = { _, _ -> },
+        onSuccess: (OUTPUT) -> Unit = {},
         onException: (DomainException) -> Unit = {}
     ) {
         execute(this, coroutineScope, value, onSuccess, onException)

@@ -7,7 +7,7 @@ interface UseCase<REQUEST, RESULT> {
     suspend fun execute(
         input: REQUEST,
         coroutineScope: CoroutineScope,
-        onResult: (RESULT, CoroutineScope) -> Unit
+        onResult: (RESULT) -> Unit
     )
 
 }
