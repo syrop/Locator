@@ -13,10 +13,12 @@ import pl.org.seva.locator.domain.cleanarchitecture.usecase.UseCaseExecutor
 import pl.org.seva.locator.domain.repository.TagRepository
 import pl.org.seva.locator.domain.usecase.GetAllTagsUseCase
 import pl.org.seva.locator.domain.usecase.AddTagUseCase
+import pl.org.seva.locator.domain.usecase.ContinuousScanUseCase
 import pl.org.seva.locator.domain.usecase.ScanUseCase
 import pl.org.seva.locator.domain.usecase.StopScanUseCase
 import pl.org.seva.locator.domain.usecase.UpdateTagUseCase
 import pl.org.seva.locator.presentation.CoordinatesPresentation
+import pl.org.seva.locator.presentation.LocatorPresentation
 import pl.org.seva.locator.presentation.ScannerPresentation
 import pl.org.seva.locator.presentation.architecture.UseCaseExecutorProvider
 import pl.org.seva.locator.presentation.mapper.ScanResultDomainToPresentationMapper
@@ -39,6 +41,9 @@ class PresentationModule {
 
     @Provides
     fun providesScanUseCase(tagRepository: TagRepository) = ScanUseCase(tagRepository)
+
+    @Provides
+    fun providesContinuousScanUseCase(tagRepository: TagRepository) = ContinuousScanUseCase(tagRepository)
 
     @Provides
     fun providesStopScanUseCase(tagRepository: TagRepository) = StopScanUseCase(tagRepository)
@@ -105,6 +110,24 @@ class PresentationModule {
         tagPresentationToDomainMapper,
         getAllTagsUseCase,
         updateTagUseCase,
+        useCaseExecutorProvider,
+    )
+
+    @Provides
+    @Singleton
+    fun provideLocatorPresentation(
+        tagDomainToPresentationMapper: TagDomainToPresentationMapper,
+        tagPresentationToDomainMapper: TagPresentationToDomainMapper,
+        getAllTagsUseCase: GetAllTagsUseCase,
+        scanUseCase: ContinuousScanUseCase,
+        stopScanUseCase: StopScanUseCase,
+        useCaseExecutorProvider: UseCaseExecutorProvider,
+    ) = LocatorPresentation(
+        tagDomainToPresentationMapper,
+        tagPresentationToDomainMapper,
+        getAllTagsUseCase,
+        scanUseCase,
+        stopScanUseCase,
         useCaseExecutorProvider,
     )
 

@@ -11,6 +11,8 @@ interface TagRepository {
 
     fun scan(onFound: () -> Unit = {})
 
+    fun continuousScan(onFound: (Pair<TagDomainModel, ScanResultDomainModel>) -> Unit = {})
+
     fun stopScan()
 
     fun add(tag: TagDomainModel)

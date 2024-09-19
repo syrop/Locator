@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -29,18 +30,20 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import pl.org.seva.locator.ui.theme.VictorLocatorTheme
 import kotlinx.serialization.Serializable
 import pl.org.seva.locator.presentation.CoordinatesPresentation
+import pl.org.seva.locator.presentation.LocatorPresentation
 import pl.org.seva.locator.presentation.ScannerPresentation
 import pl.org.seva.locator.screen.CoordinatesScreen
-import pl.org.seva.locator.screen.GreetingScreen
+import pl.org.seva.locator.screen.LocatorScreen
 import pl.org.seva.locator.screen.ScannerScreen
 import javax.inject.Inject
 
 @Serializable
-object Greetings
+object Locator
 @Serializable
 object Coordinates
 @Serializable
@@ -61,6 +64,9 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var coordinatesPresentation: CoordinatesPresentation
 
+    @Inject
+    lateinit var locatorPresentation: LocatorPresentation
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +76,20 @@ class MainActivity : ComponentActivity() {
             val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
             val scope = rememberCoroutineScope()
             var selected by remember { mutableStateOf(Destination.Greetings) }
+
+            navController.addOnDestinationChangedListener { controller, destination, bundle ->
+                when(controller.currentBackStackEntry?.destination?.route) {
+                    Coordinates::class.qualifiedName -> coordinatesPresentation.load(scope)
+                    Locator::class.qualifiedName -> {
+                        locatorPresentation.load(scope)
+                        locatorPresentation.scan(scope)
+                    }
+                }
+                when (controller.previousBackStackEntry?.destination?.route) {
+                    Locator::class.qualifiedName -> locatorPresentation.stopScan(scope)
+                    Scanner::class.qualifiedName -> scannerPresentation.stopScan(scope)
+                }
+            }
 
             VictorLocatorTheme {
                 Scaffold(
@@ -101,14 +121,14 @@ class MainActivity : ComponentActivity() {
                         drawerContent = {
                             ModalDrawerSheet {
                                 NavigationDrawerItem(
-                                    label = { Text(text = "Greetings") },
+                                    label = { Text(text = "Locator") },
                                     selected = selected == Destination.Greetings,
                                     onClick = {
                                         selected = Destination.Greetings
                                         scope.launch {
                                             drawerState.close()
                                         }
-                                        navController.navigate(route = Greetings)
+                                        navController.navigate(route = Locator)
                                     }
                                 )
                                 NavigationDrawerItem(
@@ -116,7 +136,6 @@ class MainActivity : ComponentActivity() {
                                     selected = selected == Destination.Coordinates,
                                     onClick = {
                                         selected = Destination.Coordinates
-                                        coordinatesPresentation.load    (scope)
                                         scope.launch {
                                             drawerState.close()
                                         }
@@ -134,15 +153,19 @@ class MainActivity : ComponentActivity() {
                                         navController.navigate(route = Scanner)
                                     }
                                 )
-
                             }
                         }
                     ) {
-
-                        NavHost(navController = navController, startDestination = Greetings) {
-                            composable<Greetings> { GreetingScreen(name = "Android") }
-                            composable<Coordinates> { CoordinatesScreen(coordinatesPresentation) }
-                            composable<Scanner> { ScannerScreen(scannerPresentation) }
+                        NavHost(navController = navController, startDestination = Locator) {
+                            composable<Locator> {
+                                LocatorScreen(locatorPresentation)
+                            }
+                            composable<Coordinates> {
+                                CoordinatesScreen(coordinatesPresentation)
+                            }
+                            composable<Scanner> {
+                                ScannerScreen(scannerPresentation)
+                            }
                         }
                     }
                 }

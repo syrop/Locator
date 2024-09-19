@@ -37,6 +37,15 @@ class TagLiveRepository(
         }
     }
 
+    override fun continuousScan(onFound: (Pair<TagDomainModel, ScanResultDomainModel>) -> Unit) {
+        tagDataSource.scan { tag, scanResult ->
+            onFound(
+                tagDataToDomainMapper.toDomain(tag) to
+                    scanResultDataToDomainMapper.toDomain(scanResult)
+            )
+        }
+    }
+
     override fun stopScan() = tagDataSource.stopScan()
 
     override fun add(tag: TagDomainModel) {
