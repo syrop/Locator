@@ -57,4 +57,8 @@ class TagLiveDataSource(
 
     override fun getAll() = tagDao.getAll().map { tagDataSourceToDataMapperMapper.toData(it) }
 
+    override fun delete(address: String) {
+        tagDao.delete(address)
+    }
+
 }

@@ -146,6 +146,14 @@ fun CoordinatesScreen(
                     )
                     Row {
                         TextButton(
+                            onClick = {
+                                dialogOpen = false
+                                presentation.delete(scope, tag.address)
+                            }
+                        ) {
+                            Text("Delete")
+                        }
+                        TextButton(
                             onClick = { dialogOpen = false }
                         ) {
                             Text("Cancel")

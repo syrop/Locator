@@ -22,4 +22,7 @@ interface TagDao {
     @Update
     fun update(tag: TagDataSourceModel)
 
+    @Query("DELETE FROM TagDataSourceModel where address = :address")
+    fun delete(address: String)
+
 }

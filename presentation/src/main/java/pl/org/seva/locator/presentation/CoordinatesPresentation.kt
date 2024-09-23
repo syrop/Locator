@@ -3,6 +3,7 @@ package pl.org.seva.locator.presentation
 import kotlinx.coroutines.CoroutineScope
 import pl.org.seva.locator.domain.model.ScanResultDomainModel
 import pl.org.seva.locator.domain.model.TagDomainModel
+import pl.org.seva.locator.domain.usecase.DeleteTagUseCase
 import pl.org.seva.locator.domain.usecase.GetAllTagsUseCase
 import pl.org.seva.locator.domain.usecase.UpdateTagUseCase
 import pl.org.seva.locator.presentation.architecture.BasePresentation
@@ -17,6 +18,7 @@ class CoordinatesPresentation(
     private val tagPresentationToDomainMapper: TagPresentationToDomainMapper,
     private val getAllTagsUseCase: GetAllTagsUseCase,
     private val updateTagUseCase: UpdateTagUseCase,
+    private val deleteTagUseCase: DeleteTagUseCase,
     useCaseExecutorProvider: UseCaseExecutorProvider,
 ) : BasePresentation<CoordinatesViewState>(useCaseExecutorProvider) {
 
@@ -24,19 +26,23 @@ class CoordinatesPresentation(
         get() = CoordinatesViewState(emptyList())
 
     fun load(scope: CoroutineScope) {
-        getAllTagsUseCase(scope, Unit, ::onLoadedWithScanResult)
+        getAllTagsUseCase(scope, Unit, ::onLoaded)
     }
 
-    fun onLoadedWithScanResult(list: List<Pair<TagDomainModel, ScanResultDomainModel>>) {
+    fun onLoaded(list: List<Pair<TagDomainModel, ScanResultDomainModel>>) {
         updateViewState { CoordinatesViewState(list.map { tagDomainToPresentationMapper.toPresentation(it.first) }) }
     }
 
-    fun onLoaded(list: List<TagDomainModel>) {
+    fun onUpdated(list: List<TagDomainModel>) {
         updateViewState { CoordinatesViewState(list.map { tagDomainToPresentationMapper.toPresentation(it) }) }
     }
 
     fun update(scope: CoroutineScope, tag: TagPresentationModel) {
-        updateTagUseCase(scope, tagPresentationToDomainMapper.toDomain(tag), ::onLoaded)
+        updateTagUseCase(scope, tagPresentationToDomainMapper.toDomain(tag), ::onUpdated)
+    }
+
+    fun delete(scope: CoroutineScope, address: String) {
+        deleteTagUseCase(scope, address, ::onUpdated)
     }
 
 }

@@ -61,4 +61,8 @@ class TagLiveRepository(
         tagDataSource.update(tagDomainToDataMapper.toData(tag))
     }
 
+    override fun delete(address: String) {
+        tagDataSource.delete(address)
+    }
+
 }

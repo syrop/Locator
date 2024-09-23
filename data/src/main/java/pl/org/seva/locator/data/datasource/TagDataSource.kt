@@ -14,4 +14,6 @@ interface TagDataSource {
     fun update(tag: TagDataModel)
 
     fun getAll(): List<TagDataModel>
+
+    fun delete(address: String)
 }

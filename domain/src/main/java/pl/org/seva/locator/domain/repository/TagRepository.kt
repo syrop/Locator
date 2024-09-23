@@ -19,4 +19,6 @@ interface TagRepository {
 
     fun update(tag: TagDomainModel)
 
+    fun delete(address: String)
+
 }
