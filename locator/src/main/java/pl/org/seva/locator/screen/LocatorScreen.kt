@@ -80,12 +80,6 @@ fun LocatorScreen(presentation: LocatorPresentation) {
                 return@let
             }
             drawCircle(Color.Red, 10f, location.toOffset())
-            drawText(
-                topLeft = location.toOffset(),
-                style = TextStyle(color = color),
-                textMeasurer = textMeasurer,
-                text = "${location.first}:${location.second}"
-            )
         }
     }
 
