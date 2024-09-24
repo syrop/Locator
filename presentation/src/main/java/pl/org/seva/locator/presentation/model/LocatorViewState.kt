@@ -4,6 +4,7 @@ data class LocatorViewState(
     val isLoading: Boolean,
     val tags: List<TagPresentationModel>,
     val rssiMap: Map<String, Int>,
+    val location: Pair<Double, Double>?,
 ) {
 
     fun withTags(tags: List<TagPresentationModel>) = copy(
@@ -14,4 +15,7 @@ data class LocatorViewState(
     fun withMap(rssiMap: Map<String, Int>) = copy(
         rssiMap = rssiMap,
     )
+
+    fun withLocation(location: Pair<Double, Double>) = copy(location = location)
+
 }

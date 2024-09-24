@@ -1,5 +1,6 @@
 package pl.org.seva.locator.screen
 
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -47,10 +48,12 @@ fun LocatorScreen(presentation: LocatorPresentation) {
     val dY = maxY - minY + 2
     val textMeasurer = rememberTextMeasurer()
 
-    fun TagPresentationModel.toOffset() = Offset(
-        if (dX == 0) 0f else size.width / dX + (x - minX) * size.width / dX,
-        if (dY == 0) 0f else size.height / dY + (y - minY) * size.height / dY,
+    fun Pair<Double, Double>.toOffset() = Offset(
+        if (dX == 0) 0f else size.width / dX + (first.toFloat() - minX) * size.width / dX,
+        if (dY == 0) 0f else size.height / dY + (second.toFloat() - minY) * size.height / dY,
     )
+
+    fun TagPresentationModel.toOffset() = (x.toDouble() to y.toDouble()).toOffset()
 
     Canvas(
         modifier = Modifier
@@ -75,6 +78,9 @@ fun LocatorScreen(presentation: LocatorPresentation) {
                     }
                 }
             )
+        }
+        viewState.location?.let { location ->
+            drawCircle(Color.Red, 10f, location.toOffset())
         }
     }
 

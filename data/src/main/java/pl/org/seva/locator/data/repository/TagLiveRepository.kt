@@ -65,4 +65,9 @@ class TagLiveRepository(
         tagDataSource.delete(address)
     }
 
+    override operator fun get(address: String): TagDomainModel {
+        val pair = requireNotNull(list.find { it.first.address == address }) { "Wrong address" }
+        return tagDataToDomainMapper.toDomain(pair.first)
+    }
+
 }

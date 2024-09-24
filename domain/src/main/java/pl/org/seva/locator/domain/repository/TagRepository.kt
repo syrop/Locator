@@ -21,4 +21,6 @@ interface TagRepository {
 
     fun delete(address: String)
 
+    operator fun get(address: String): TagDomainModel
+
 }

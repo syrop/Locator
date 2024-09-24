@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "pl.org.seva.mylibrary"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 30

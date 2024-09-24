@@ -15,6 +15,7 @@ import pl.org.seva.locator.domain.usecase.GetAllTagsUseCase
 import pl.org.seva.locator.domain.usecase.AddTagUseCase
 import pl.org.seva.locator.domain.usecase.ContinuousScanUseCase
 import pl.org.seva.locator.domain.usecase.DeleteTagUseCase
+import pl.org.seva.locator.domain.usecase.LocationUseCase
 import pl.org.seva.locator.domain.usecase.ScanUseCase
 import pl.org.seva.locator.domain.usecase.StopScanUseCase
 import pl.org.seva.locator.domain.usecase.UpdateTagUseCase
@@ -57,6 +58,9 @@ class PresentationModule {
 
     @Provides
     fun providesDeleteTagUseCase(tagRepository: TagRepository) = DeleteTagUseCase(tagRepository)
+
+    @Provides
+    fun provideLocationUseCase(tagRepository: TagRepository) = LocationUseCase(tagRepository)
 
     @Provides
     fun provideGetAllUseCase(tagRepository: TagRepository) = GetAllTagsUseCase(tagRepository)
@@ -127,6 +131,7 @@ class PresentationModule {
         getAllTagsUseCase: GetAllTagsUseCase,
         scanUseCase: ContinuousScanUseCase,
         stopScanUseCase: StopScanUseCase,
+        locationUseCase: LocationUseCase,
         useCaseExecutorProvider: UseCaseExecutorProvider,
     ) = LocatorPresentation(
         tagDomainToPresentationMapper,
@@ -134,6 +139,7 @@ class PresentationModule {
         getAllTagsUseCase,
         scanUseCase,
         stopScanUseCase,
+        locationUseCase,
         useCaseExecutorProvider,
     )
 

@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "pl.org.seva.locator"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "pl.org.seva.locator"
         minSdk = 30
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 

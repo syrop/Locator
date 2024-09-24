@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -30,7 +29,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import pl.org.seva.locator.ui.theme.VictorLocatorTheme
 import kotlinx.serialization.Serializable
@@ -78,16 +76,16 @@ class MainActivity : ComponentActivity() {
             var selected by remember { mutableStateOf(Destination.Greetings) }
 
             navController.addOnDestinationChangedListener { controller, destination, bundle ->
+                when (controller.previousBackStackEntry?.destination?.route) {
+                    Locator::class.qualifiedName -> locatorPresentation.stopScan(scope)
+                    Scanner::class.qualifiedName -> scannerPresentation.stopScan(scope)
+                }
                 when(controller.currentBackStackEntry?.destination?.route) {
                     Coordinates::class.qualifiedName -> coordinatesPresentation.load(scope)
                     Locator::class.qualifiedName -> {
                         locatorPresentation.load(scope)
-                        locatorPresentation.scan(scope)
+                        locatorPresentation.startContinuousScanning(scope)
                     }
-                }
-                when (controller.previousBackStackEntry?.destination?.route) {
-                    Locator::class.qualifiedName -> locatorPresentation.stopScan(scope)
-                    Scanner::class.qualifiedName -> scannerPresentation.stopScan(scope)
                 }
             }
 
