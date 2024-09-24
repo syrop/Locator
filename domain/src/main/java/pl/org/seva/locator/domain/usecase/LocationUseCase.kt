@@ -12,7 +12,9 @@ class LocationUseCase(
     override suspend fun executeInBackground(request: List<Pair<String, Double>>): Pair<Double, Double> {
 
         fun location(list: List<Triple<Double, Double, Double>>): Pair<Double, Double> {
-            if (list.size != 3) throw IllegalArgumentException("Exactly three items are allowed")
+            if (list.size != 3) {
+                throw IllegalArgumentException("Exactly three items are allowed")
+            }
             val (x1, y1, r1) = list[0]
             val (x2, y2, r2) = list[1]
             val (x3, y3, r3) = list[2]
@@ -44,11 +46,16 @@ class LocationUseCase(
                         val x3 = tag3.x.toDouble()
                         val y3 = tag3.y.toDouble()
                         val r3 = request[i3].second
-                        solutions.add(location(listOf(
-                            Triple(x1, y1, r1),
-                            Triple(x2, y2, r2),
-                            Triple(x3, y3, r3),
-                        )))
+                        val location = location(
+                            listOf(
+                                Triple(x1, y1, r1),
+                                Triple(x2, y2, r2),
+                                Triple(x3, y3, r3),
+                            )
+                        )
+                        if (location.first.isFinite() && location.second.isFinite()) {
+                            solutions.add(location)
+                        }
                     }
                 }
             }

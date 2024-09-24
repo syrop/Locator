@@ -12,9 +12,8 @@ import pl.org.seva.locator.presentation.architecture.UseCaseExecutorProvider
 import pl.org.seva.locator.presentation.mapper.TagDomainToPresentationMapper
 import pl.org.seva.locator.presentation.mapper.TagPresentationToDomainMapper
 import pl.org.seva.locator.presentation.model.LocatorViewState
-import sun.reflect.generics.scope.Scope
 import kotlin.math.max
-import kotlin.math.min
+import kotlin.math.pow
 
 class LocatorPresentation(
     private val tagDomainToPresentationMapper: TagDomainToPresentationMapper,
@@ -27,6 +26,8 @@ class LocatorPresentation(
 ) : BasePresentation<LocatorViewState>(useCaseExecutorProvider) {
 
     private val timeMap = mutableMapOf<String, Long>()
+
+    private val locations = mutableSetOf<Pair<Long, Pair<Double, Double>>>()
 
     override val initialViewState: LocatorViewState
         get() = LocatorViewState(true, emptyList(), emptyMap(), null)
@@ -48,6 +49,9 @@ class LocatorPresentation(
     }
 
     fun onFound(scope: CoroutineScope, pair: Pair<TagDomainModel, ScanResultDomainModel>) {
+        if (!viewState.value.tags.map { it.address }.contains(pair.first.address)){
+            return
+        }
         val currentTime = System.currentTimeMillis()
         timeMap[pair.first.address] = currentTime
         updateViewState {
@@ -63,8 +67,10 @@ class LocatorPresentation(
             }
             val distances = mutableListOf<Pair<String, Double>>()
             mostRecentMap.forEach {
-                val normalizedRssi = min(max(it.value, -80), -40)
-                distances.add(it.key to -(normalizedRssi + 40) / 40.0 * maxDistance)
+                // https://stackoverflow.com/a/61986152/10821419
+                val distanceM = 10.0.pow((128.0 - it.value.toDouble() - 180.0) / (10 * 2))
+
+                distances.add(it.key to distanceM / MYSTERIOUS_NUMBER)
             }
             if (distances.size >= 3) {
                 locationUseCase(scope, distances, ::onLocation)
@@ -74,11 +80,20 @@ class LocatorPresentation(
     }
 
     fun onLocation(location: Pair<Double, Double>) {
-        updateViewState { withLocation(location) }
+        val now = System.currentTimeMillis()
+        val mostRecentLocations = locations.filter {
+            it.second.first.isFinite() && it.second.second.isFinite() && now - it.first <= WINDOW
+        } + (now to location)
+        locations.clear()
+        locations.addAll(mostRecentLocations)
+        val avgX = locations.map { it.second.first }.average()
+        val avgY = locations.map { it.second.second }.average()
+        updateViewState { withLocation(avgX to avgY) }
     }
 
     companion object {
-        const val WINDOW = 2000L
+        const val WINDOW = 4000L
+        const val MYSTERIOUS_NUMBER = 20.0
     }
 
 }

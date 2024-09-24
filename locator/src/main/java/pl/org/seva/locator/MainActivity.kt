@@ -1,9 +1,14 @@
 package pl.org.seva.locator
 
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -25,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -65,6 +71,18 @@ class MainActivity : ComponentActivity() {
     @Inject
     lateinit var locatorPresentation: LocatorPresentation
 
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { map ->
+            if (map.containsValue(false)) {
+                Toast.makeText(
+                    this,
+                    "Permissions not granted.\nProgram will not work.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
+
+    @RequiresApi(Build.VERSION_CODES.S)
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,6 +103,26 @@ class MainActivity : ComponentActivity() {
                     Locator::class.qualifiedName -> {
                         locatorPresentation.load(scope)
                         locatorPresentation.startContinuousScanning(scope)
+                    }
+                    Scanner::class.qualifiedName -> {
+                        scannerPresentation.clearTags()
+                        if (
+                            ContextCompat.checkSelfPermission(
+                                this,
+                                android.Manifest.permission.BLUETOOTH_SCAN
+                            ) != PackageManager.PERMISSION_GRANTED ||
+                                ContextCompat.checkSelfPermission(
+                                    this,
+                                    android.Manifest.permission.BLUETOOTH_CONNECT
+                                ) != PackageManager.PERMISSION_GRANTED
+                        ) {
+                            requestPermissionLauncher.launch(
+                                arrayOf(
+                                    android.Manifest.permission.BLUETOOTH_SCAN,
+                                    android.Manifest.permission.BLUETOOTH_CONNECT,
+                                ),
+                            )
+                        }
                     }
                 }
             }

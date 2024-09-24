@@ -1,8 +1,6 @@
 package pl.org.seva.locator.screen
 
-import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Text
@@ -17,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextStyle
@@ -27,10 +24,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.toSize
 import pl.org.seva.locator.presentation.LocatorPresentation
-import pl.org.seva.locator.presentation.model.CoordinatesViewState
 import pl.org.seva.locator.presentation.model.LocatorViewState
 import pl.org.seva.locator.presentation.model.TagPresentationModel
-import kotlin.math.abs
 
 
 @Composable
@@ -80,7 +75,17 @@ fun LocatorScreen(presentation: LocatorPresentation) {
             )
         }
         viewState.location?.let { location ->
+            if (location.first < minX || location.first > maxX ||
+                location.second < minY || location.second > maxY) {
+                return@let
+            }
             drawCircle(Color.Red, 10f, location.toOffset())
+            drawText(
+                topLeft = location.toOffset(),
+                style = TextStyle(color = color),
+                textMeasurer = textMeasurer,
+                text = "${location.first}:${location.second}"
+            )
         }
     }
 

@@ -66,7 +66,7 @@ class TagLiveRepository(
     }
 
     override operator fun get(address: String): TagDomainModel {
-        val pair = requireNotNull(list.find { it.first.address == address }) { "Wrong address" }
+        val pair = requireNotNull(list.find { it.first.address == address }) { "Wrong address: $address" }
         return tagDataToDomainMapper.toDomain(pair.first)
     }
 

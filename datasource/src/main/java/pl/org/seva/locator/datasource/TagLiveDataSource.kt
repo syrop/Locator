@@ -39,7 +39,7 @@ class TagLiveDataSource(
                     )
                 }
             },
-            scanError = {}
+            scanError = {},
         )
     }
 

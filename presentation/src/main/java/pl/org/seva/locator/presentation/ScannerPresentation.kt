@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import pl.org.seva.locator.domain.model.ScanResultDomainModel
 import pl.org.seva.locator.domain.model.TagDomainModel
 import pl.org.seva.locator.domain.usecase.AddTagUseCase
+import pl.org.seva.locator.domain.usecase.GetAllTagsUseCase
 import pl.org.seva.locator.domain.usecase.ScanUseCase
 import pl.org.seva.locator.domain.usecase.StopScanUseCase
 import pl.org.seva.locator.presentation.architecture.BasePresentation
@@ -18,6 +19,7 @@ class ScannerPresentation(
     private val tagDomainToPresentationMapper: TagDomainToPresentationMapper,
     private val scanResultDomainToPresentationMapper: ScanResultDomainToPresentationMapper,
     private val tagPresentationToDomainMapper: TagPresentationToDomainMapper,
+    private val getAllTagsUseCase: GetAllTagsUseCase,
     private val scanUseCase: ScanUseCase,
     private val stopScanUseCase: StopScanUseCase,
     private val saveUseCase: AddTagUseCase,
@@ -27,8 +29,22 @@ class ScannerPresentation(
     override val initialViewState: ScannerViewState
         get() = ScannerViewState(emptyList())
 
+    fun clearTags() {
+        updateViewState { initialViewState }
+    }
+
     fun scan(scope: CoroutineScope) {
-        scanUseCase(scope, ::onFound)
+        getAllTagsUseCase(scope, Unit, { onLoadedWithScanResult(scope, it)} )
+    }
+
+    fun onLoadedWithScanResult(scope: CoroutineScope, list: List<Pair<TagDomainModel, ScanResultDomainModel>>) {
+        val knownAddresses = list.map { it.first.address }
+        scanUseCase(
+            scope,
+            { foundTags ->
+                onFound(foundTags.filter { !knownAddresses.contains(it.first.address) } )
+            },
+        )
     }
 
     fun stopScan(scope: CoroutineScope) {
