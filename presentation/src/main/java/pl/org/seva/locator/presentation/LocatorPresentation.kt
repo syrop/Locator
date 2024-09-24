@@ -59,9 +59,6 @@ class LocatorPresentation(
             val maxX = tags.maxOfOrNull { it.x } ?: 0
             val minY = tags.minOfOrNull { it.y } ?: 0
             val maxY = tags.maxOfOrNull { it.y } ?: 0
-            val dX = maxX - minX
-            val dY = maxY - minY
-            val maxDistance = max(dX, dY)
             val mostRecentMap = rssiMap.filter {
                 currentTime - (timeMap[it.key] ?: 0L) <= WINDOW
             }
@@ -69,11 +66,20 @@ class LocatorPresentation(
             mostRecentMap.forEach {
                 // https://stackoverflow.com/a/61986152/10821419
                 val distanceM = 10.0.pow((128.0 - it.value.toDouble() - 180.0) / (10 * 2))
-
                 distances.add(it.key to distanceM / MYSTERIOUS_NUMBER)
             }
             if (distances.size >= 3) {
-                locationUseCase(scope, distances, ::onLocation)
+                locationUseCase(
+                    scope,
+                    distances,
+                    { location ->
+                        if (location.first < minX - 1.0 || location.first > maxX  + 1.0 ||
+                            location.second < minY - 1.0 || location.second > maxY + 1.0) {
+                            return@locationUseCase
+                        }
+                        onLocation(location)
+                    }
+                )
             }
             withMap(mostRecentMap + mapOf(pair.first.address to pair.second.rssi))
         }
@@ -92,8 +98,8 @@ class LocatorPresentation(
     }
 
     companion object {
-        const val WINDOW = 4000L
-        const val MYSTERIOUS_NUMBER = 20.0
+        const val WINDOW = 3000L
+        const val MYSTERIOUS_NUMBER = 3.0
     }
 
 }

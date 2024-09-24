@@ -3,7 +3,6 @@ package pl.org.seva.locator.screen
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,7 +31,6 @@ import pl.org.seva.locator.presentation.model.TagPresentationModel
 fun LocatorScreen(presentation: LocatorPresentation) {
 
     var size by remember { mutableStateOf(Size.Zero) }
-    val scope = rememberCoroutineScope()
     val viewState: LocatorViewState = presentation.viewState.collectAsState().value
     val color = if (isSystemInDarkTheme()) Color.White else Color.Black
     val minX = viewState.tags.minOfOrNull { it.x } ?: 0
@@ -75,8 +73,8 @@ fun LocatorScreen(presentation: LocatorPresentation) {
             )
         }
         viewState.location?.let { location ->
-            if (location.first < minX || location.first > maxX ||
-                location.second < minY || location.second > maxY) {
+            if (location.first < minX - 1.0 || location.first > maxX + 1.0 ||
+                location.second < minY -1.0 || location.second > maxY + 1.0) {
                 return@let
             }
             drawCircle(Color.Red, 10f, location.toOffset())
