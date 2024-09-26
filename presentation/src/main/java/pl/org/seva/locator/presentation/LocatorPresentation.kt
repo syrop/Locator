@@ -99,7 +99,7 @@ class LocatorPresentation(
     }
 
     companion object {
-        const val WINDOW = 10_000L
+        const val WINDOW = 5_000L
     }
 
 }

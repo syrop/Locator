@@ -14,5 +14,6 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.trilateration)
     testImplementation(libs.junit.jupiter)
 }
