@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +36,7 @@ import androidx.compose.ui.text.ParagraphStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
@@ -50,6 +52,8 @@ fun CoordinatesScreen(
     presentation: CoordinatesPresentation
 ) {
 
+    val margin = 100
+
     var size by remember { mutableStateOf(Size.Zero) }
     val scope = rememberCoroutineScope()
     val viewState: CoordinatesViewState = presentation.viewState.collectAsState().value
@@ -58,8 +62,8 @@ fun CoordinatesScreen(
     val maxX = viewState.tags.maxOfOrNull { it.x } ?: 0
     val minY = viewState.tags.minOfOrNull { it.y } ?: 0
     val maxY = viewState.tags.maxOfOrNull { it.y } ?: 0
-    val dX = maxX - minX + 2
-    val dY = maxY - minY + 2
+    val dX = maxX - minX + margin * 2
+    val dY = maxY - minY + margin * 2
     val textMeasurer = rememberTextMeasurer()
     var dialogOpen by remember { mutableStateOf(false) }
     var selectedTag by remember { mutableStateOf<TagPresentationModel?>(null) }
@@ -68,8 +72,8 @@ fun CoordinatesScreen(
     var enteredY by remember { mutableStateOf("") }
 
     fun TagPresentationModel.toOffset() = Offset(
-        if (dX == 0) 0f else size.width / dX + (x - minX) * size.width / dX,
-        if (dY == 0) 0f else size.height / dY + (y - minY) * size.height / dY,
+        if (dX == 0) 0f else size.width / dX + (x - minX + margin) * size.width / dX,
+        if (dY == 0) 0f else size.height / dY + (y - minY + margin) * size.height / dY,
     )
 
     Canvas(
@@ -137,12 +141,14 @@ fun CoordinatesScreen(
                     TextField(
                         value = enteredX,
                         onValueChange = { enteredX = it },
-                        label = { Text("X") }
+                        label = { Text("X [cm]") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     )
                     TextField(
                         value = enteredY,
                         onValueChange = { enteredY = it },
-                        label = { Text("Y") }
+                        label = { Text("Y [cm]") },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     )
                     Row {
                         TextButton(
@@ -175,4 +181,5 @@ fun CoordinatesScreen(
             }
         }
     }
+
 }

@@ -53,7 +53,7 @@ class TagLiveRepository(
         if (all.find { it.address == tag.address } != null) {
             return
         }
-        val newY = (tagDataSource.getAll().maxOfOrNull { it.y } ?: -1) + 1
+        val newY = (tagDataSource.getAll().maxOfOrNull { it.y } ?: -1) + 50
         tagDataSource.add(tagDomainToDataMapper.toData(tag.copy(y = newY)))
     }
 

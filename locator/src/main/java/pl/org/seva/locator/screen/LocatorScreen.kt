@@ -30,6 +30,8 @@ import pl.org.seva.locator.presentation.model.TagPresentationModel
 @Composable
 fun LocatorScreen(presentation: LocatorPresentation) {
 
+    val margin = 100
+
     var size by remember { mutableStateOf(Size.Zero) }
     val viewState: LocatorViewState = presentation.viewState.collectAsState().value
     val color = if (isSystemInDarkTheme()) Color.White else Color.Black
@@ -37,13 +39,13 @@ fun LocatorScreen(presentation: LocatorPresentation) {
     val maxX = viewState.tags.maxOfOrNull { it.x } ?: 0
     val minY = viewState.tags.minOfOrNull { it.y } ?: 0
     val maxY = viewState.tags.maxOfOrNull { it.y } ?: 0
-    val dX = maxX - minX + 2
-    val dY = maxY - minY + 2
+    val dX = maxX - minX + margin * 2
+    val dY = maxY - minY + margin * 2
     val textMeasurer = rememberTextMeasurer()
 
     fun Pair<Double, Double>.toOffset() = Offset(
-        if (dX == 0) 0f else size.width / dX + (first.toFloat() - minX) * size.width / dX,
-        if (dY == 0) 0f else size.height / dY + (second.toFloat() - minY) * size.height / dY,
+        if (dX == 0) 0f else size.width / dX + (first.toFloat() - minX + margin) * size.width / dX,
+        if (dY == 0) 0f else size.height / dY + (second.toFloat() - minY + margin) * size.height / dY,
     )
 
     fun TagPresentationModel.toOffset() = (x.toDouble() to y.toDouble()).toOffset()

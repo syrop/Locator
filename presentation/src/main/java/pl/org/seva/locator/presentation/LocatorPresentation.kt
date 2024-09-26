@@ -62,16 +62,17 @@ class LocatorPresentation(
             val mostRecentMap = rssiMap.filter {
                 currentTime - (timeMap[it.key] ?: 0L) <= WINDOW
             }
-            val distances = mutableListOf<Pair<String, Double>>()
-            mostRecentMap.forEach {
-                // https://stackoverflow.com/a/61986152/10821419
-                val distanceM = 10.0.pow((128.0 - it.value.toDouble() - 180.0) / (10 * 2))
-                distances.add(it.key to distanceM / MYSTERIOUS_NUMBER)
+            val distances = mutableMapOf<String, Double>()
+            // https://stackoverflow.com/a/61986152/10821419
+            mostRecentMap.keys.forEach { key ->
+                val averageRssi = mostRecentMap.filter { it.key == key }.values.average()
+                val distanceM = 10.0.pow((128.0 - averageRssi - 180.0) / (10 * 2))
+                distances[key] = distanceM
             }
             if (distances.size >= 3) {
                 locationUseCase(
                     scope,
-                    distances,
+                    distances.toList(),
                     { location ->
                         if (location.first < minX - 1.0 || location.first > maxX  + 1.0 ||
                             location.second < minY - 1.0 || location.second > maxY + 1.0) {
@@ -98,8 +99,7 @@ class LocatorPresentation(
     }
 
     companion object {
-        const val WINDOW = 3000L
-        const val MYSTERIOUS_NUMBER = 3.0
+        const val WINDOW = 10_000L
     }
 
 }

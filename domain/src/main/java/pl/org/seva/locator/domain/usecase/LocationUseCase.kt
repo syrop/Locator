@@ -30,7 +30,8 @@ class LocationUseCase(
         }
 
         return withContext(Dispatchers.Default) {
-            val solutions = mutableListOf<Pair<Double, Double>>()
+            data class Location(val distance: Double, val x: Double, val y: Double)
+            val solutions = mutableListOf<Location>()
             for (i1 in 0..request.size - 3) {
                 val tag1 = tagRepository[request[i1].first]
                 val x1 = tag1.x.toDouble()
@@ -53,14 +54,15 @@ class LocationUseCase(
                                 Triple(x3, y3, r3),
                             )
                         )
-                        if (location.first.isFinite() && location.second.isFinite()) {
-                            solutions.add(location)
+                        if (location.first.isFinite() && location.second.isFinite() &&
+                            location.first >= 0.0 && location.second >= 0.0) {
+                            solutions.add(Location(r1 + r2 + r3, location.first, location.second))
                         }
                     }
                 }
             }
-            val x = solutions.map { it.first }.average()
-            val y = solutions.map { it.second }.average()
+            val x = solutions.minBy { it.distance }.x
+            val y = solutions.minBy { it.distance }.y
             return@withContext x to y
         }
     }
